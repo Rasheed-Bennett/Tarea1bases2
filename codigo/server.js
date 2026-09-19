@@ -32,7 +32,6 @@ app.get('/Product/id/:productID', async function (req, res) {
     try {
         const pool = await poolPromise;
         const resultado = await pool.request().input('ProductID', sql.Int, req.params.productID).execute('Production.GetProductByID')
-        console.log('ERROR !!!');
         res.json(resultado.recordset);
     }
     catch (error) {
