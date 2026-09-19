@@ -2,14 +2,20 @@
 var express = require('express'); // Web Framework
 var app = express();
 var sql = require('mssql'); // MS Sql Server client
+require('dotenv').config();
 
 // Connection string parameters.
-var sqlConfig = {
-    user: 'UserName',
-    password: 'mot de passe',
-    server: 'localhost',
-    database: 'AdventureWorks2025'
-}
+const sqlConfig = {
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    server: process.env.DB_SERVER,
+    database: process.env.DB_DATABASE,
+    port: Number(process.env.DB_PORT),
+    options: {
+        encrypt: false,
+        trustServerCertificate: true
+    }
+};
 
 // Start server and listen on http://localhost:8081/
 var server = app.listen(8081, function () {
@@ -20,7 +26,18 @@ var server = app.listen(8081, function () {
 });
 
 
-app.get('/customers/:customerId/', function (req, res) {
+app.get('/Product/id/:productID', function (req, res) {
+    sql.connect(sqlConfig, function () {
+        var request = new sql.Request();
+        var stringRequest = 'select * from Sales.Customer where customerId = ' + req.params.customerId;
+        request.query(stringRequest, function (err, recordset) {
+            if (err) console.log(err);
+            res.end(JSON.stringify(recordset)); // Result in JSON format
+        });
+    });
+})
+
+app.get('/Product/name/:productName', function (req, res) {
     sql.connect(sqlConfig, function () {
         var request = new sql.Request();
         var stringRequest = 'select * from Sales.Customer where customerId = ' + req.params.customerId;
