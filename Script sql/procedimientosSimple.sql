@@ -38,7 +38,18 @@ END
 
 GO
 CREATE PROCEDURE Production.UpdateProductByID
-@Name NVARCHAR (50), @ProductNumber NVARCHAR (25), @Color NVARCHAR (15), @StandardCost MONEY, @ListPrice MONEY, @Size NVARCHAR (5), @Weight DECIMAL (8, 2), @ProductCategoryID INT, @ProductModelID INT, @SellStartDate DATETIME, @SellEndDate DATETIME, @DiscontinuedDate DATETIME
+    @ProductID INT,
+    @Name NVARCHAR (50), 
+    @ProductNumber NVARCHAR (25), 
+    @Color NVARCHAR (15), 
+    @StandardCost MONEY, 
+    @ListPrice MONEY, 
+    @Size NVARCHAR (5), 
+    @Weight DECIMAL (8, 2), 
+    @ProductModelID INT, 
+    @SellStartDate DATETIME, 
+    @SellEndDate DATETIME, 
+    @DiscontinuedDate DATETIME
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -50,7 +61,6 @@ BEGIN
            ListPrice         = @ListPrice,
            Size              = @Size,
            Weight            = @Weight,
-           ProductCategoryID = @ProductCategoryID,
            ProductModelID    = @ProductModelID,
            SellStartDate     = @SellStartDate,
            SellEndDate       = @SellEndDate,
@@ -61,7 +71,7 @@ END
 
 GO
 CREATE PROCEDURE Production.InsertProduct
-@Name NVARCHAR (50), @ProductNumber NVARCHAR (25), @Color NVARCHAR (15), @StandardCost MONEY, @ListPrice MONEY, @Size NVARCHAR (5), @Weight DECIMAL (8, 2), @ProductCategoryID INT, @ProductModelID INT, @SellStartDate DATETIME, @SellEndDate DATETIME, @DiscontinuedDate DATETIME
+@Name NVARCHAR (50), @ProductNumber NVARCHAR (25), @Color NVARCHAR (15), @StandardCost MONEY, @ListPrice MONEY, @Size NVARCHAR (5), @Weight DECIMAL (8, 2), @ProductModelID INT, @SellStartDate DATETIME, @SellEndDate DATETIME, @DiscontinuedDate DATETIME
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -73,13 +83,12 @@ BEGIN
         ListPrice,
         Size,
         Weight,
-        ProductCategoryID,
         ProductModelID,
         SellStartDate,
         SellEndDate,
         DiscontinuedDate
     )
-    VALUES                         (@Name, @ProductNumber, @Color, @StandardCost, @ListPrice, @Size, @Weight, @ProductCategoryID, @ProductModelID, @SellStartDate, @SellEndDate, @DiscontinuedDate);
+    VALUES                         (@Name, @ProductNumber, @Color, @StandardCost, @ListPrice, @Size, @Weight, @ProductModelID, @SellStartDate, @SellEndDate, @DiscontinuedDate);
 END
 
 

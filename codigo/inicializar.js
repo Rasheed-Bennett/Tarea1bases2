@@ -1,9 +1,9 @@
 
+require('dotenv').config();
 var express = require('express'); // Web Framework
 var app = express();
 app.use(express.json());
 var sql = require('mssql'); // MS Sql Server client
-require('dotenv').config();
 
 // Connection string parameters.
 const sqlConfig = {
@@ -26,11 +26,13 @@ var server = app.listen(8081, function () {
     console.log("app listening at http://%s:%s", host, port)
 });
 
+const poolPromise = sql.connect(sqlConfig);
 
 app.get('/Product/id/:productID', async function (req, res) {
     try {
         const pool = await poolPromise;
         const resultado = await pool.request().input('ProductID', sql.Int, req.params.productID).execute('Production.GetProductByID')
+        console.log('ERROR !!!');
         res.json(resultado.recordset);
     }
     catch (error) {
@@ -166,5 +168,3 @@ app.post('/Product', async function (req, res) {
 
     }
 })
-
-sql.close();

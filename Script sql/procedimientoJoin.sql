@@ -8,16 +8,15 @@ AS
 BEGIN
     SET NOCOUNT ON;
     SELECT   p.Name AS ProductName,
-             ps.Name AS ProductCategoryName
+             pc.Name AS ProductCategoryName
     FROM     Production.Product AS p
              INNER JOIN
-             Production.ProductSubcategory AS ps
+             Production.ProductSubcategory ps
              ON p.ProductSubcategoryID = ps.ProductSubcategoryID
              INNER JOIN
-             Production.ProductCategory AS pc
+             Production.ProductCategory pc
              ON ps.ProductCategoryID = pc.ProductCategoryID
-    GROUP BY p.Name, ps.Name
-    HAVING   p.ProductID = @ProductID;
+    WHERE   p.ProductID = @ProductID;
 END
 
 
@@ -56,11 +55,13 @@ END
 
 GO
 CREATE PROCEDURE Production.JDeleteProductReviewByID
-@ProductID INT, @ReviewID INT
+    @ProductID INT, @ReviewID INT
 AS
 BEGIN
     SET NOCOUNT ON;
-    DELETE Production.ProductReview
+    DELETE FROM Production.ProductReview
     WHERE  ProductID = @ProductID
            AND ProductReviewID = @ReviewID;
 END
+
+SELECT * FROM Production.Product
