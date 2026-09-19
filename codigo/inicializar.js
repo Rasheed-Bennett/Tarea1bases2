@@ -1,6 +1,7 @@
 
 var express = require('express'); // Web Framework
 var app = express();
+app.use(express.json());
 var sql = require('mssql'); // MS Sql Server client
 require('dotenv').config();
 
@@ -26,38 +27,144 @@ var server = app.listen(8081, function () {
 });
 
 
-app.get('/Product/id/:productID', function (req, res) {
-    sql.connect(sqlConfig, function () {
-        var request = new sql.Request();
-        var stringRequest = 'select * from Sales.Customer where customerId = ' + req.params.customerId;
-        request.query(stringRequest, function (err, recordset) {
-            if (err) console.log(err);
-            res.end(JSON.stringify(recordset)); // Result in JSON format
-        });
-    });
+app.get('/Product/id/:productID', async function (req, res) {
+    try {
+        const pool = await poolPromise;
+        const resultado = await pool.request().input('ProductID', sql.Int, req.params.productID).execute('Production.GetProductByID')
+        res.json(resultado.recordset);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'No se logro obtener el producto por ID' });
+
+    }
 })
 
-app.get('/Product/name/:productName', function (req, res) {
-    sql.connect(sqlConfig, function () {
-        var request = new sql.Request();
-        var stringRequest = 'select * from Sales.Customer where customerId = ' + req.params.customerId;
-        request.query(stringRequest, function (err, recordset) {
-            if (err) console.log(err);
-            res.end(JSON.stringify(recordset)); // Result in JSON format
-        });
-    });
+app.get('/Product/CategoryId/:ProductID', async function (req, res) {
+    try {
+        const pool = await poolPromise;
+        const resultado = await pool.request().input('ProductID', sql.Int, req.params.ProductID).execute('Production.JGetProductCategoryByID')
+        res.json(resultado.recordset);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'No se logro obtener la categoria por ID' });
+
+    }
+})
+
+app.get('/Product/name/:productName', async function (req, res) {
+    try {
+        const pool = await poolPromise;
+        const resultado = await pool.request().input('ProductName', sql.VarChar, req.params.productName).execute('Production.GetProductByName')
+        res.json(resultado.recordset);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'No se logro obtener el producto por Nombre' });
+
+    }
+})
+
+app.get('/Product/CategoryName/:productName', async function (req, res) {
+    try {
+        const pool = await poolPromise;
+        const resultado = await pool.request().input('ProductName', sql.VarChar, req.params.productName).execute('Production.JGetProductCategoryByName')
+        res.json(resultado.recordset);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'No se logro obtener el producto por Nombre' });
+
+    }
+})
+
+app.delete('/Product/id/:productID', async function (req, res) {
+    try {
+        const pool = await poolPromise;
+        const resultado = await pool.request().input('ProductID', sql.Int, req.params.productID).execute('Production.GetProductByID')
+        res.json({ message: 'Producto borrado exitosamente', ProductID: resultado.recordset[0].ProductID });
+    }
+    catch (error) {
+        res.status(500).json({ error: 'No se logro borrar el producto por ID' });
+
+    }
+})
+
+app.delete('/Product/id/:productID', async function (req, res) {
+    try {
+        const pool = await poolPromise;
+        const resultado = await pool.request()
+            .input('ProductID', sql.Int, req.params.productID)
+            .input('ReviewID', sql.Int, req.body.ReviewID)
+            .execute('Production.JDeleteProductReviewByID')
+        res.json({ message: 'Producto borrado exitosamente', ProductID: resultado.recordset[0].ProductID });
+    }
+    catch (error) {
+        res.status(500).json({ error: 'No se logro borrar el producto por ID' });
+
+    }
 })
 
 
-app.get('/customers/:customerId/orders', function (req, res) {
-    sql.connect(sqlConfig, function () {
-        var request = new sql.Request();
-        request.input('CustomerId', req.params.customerId);
-        request.execute('Sales.uspShowOrderDetails', function (err, recordsets, returnValue, affected) {
-            if (err) console.log(err);
-            res.end(JSON.stringify(recordsets)); // Result in JSON format
-        });
-    });
+app.put('/Product/id/:productID', async function (req, res) {
+    try {
+        const pool = await poolPromise;
+        const resultado = await pool.request()
+            .input('ProductName', sql.VarChar, req.params.productName)
+            .input('ProductNumber', sql.VarChar, req.body.ProductNumber)
+            .input('Color', sql.VarChar, req.body.Color)
+            .input('StandardCost', sql.Decimal(19, 4), req.body.StandardCost)
+            .input('ListPrice', sql.Decimal(19, 4), req.body.ListPrice)
+            .input('Size', sql.VarChar, req.body.Size)
+            .input('Weight', sql.Decimal(8, 2), req.body.Weight)
+            .input('ProductCategoryID', sql.Int, req.body.ProductCategoryID)
+            .input('ProductModelID', sql.Int, req.body.ProductModelID)
+            .execute('Production.UpdateProductByID')
+        res.json({ message: 'Producto actualizado exitosamente', ProductID: resultado.recordset[0].ProductID });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'No se logro actualizar el producto' });
+
+    }
+})
+
+app.put('/Product/CategoryId/:productID', async function (req, res) {
+    try {
+        const pool = await poolPromise;
+        const resultado = await pool.request()
+            .input('ProductID', sql.Int, req.params.productID)
+            .input('CategoryID', sql.Int, req.body.CategoryID)
+            .execute('Production.JUpdateProductCategoryByID')
+        res.json({ message: 'Producto actualizado exitosamente', ProductID: resultado.recordset[0].ProductID });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'No se logro actualizar el producto' });
+
+    }
+})
+
+app.post('/Product', async function (req, res) {
+    try {
+        const pool = await poolPromise;
+        const resultado = await pool.request()
+            .input('ProductName', sql.VarChar, req.params.productName)
+            .input('ProductNumber', sql.VarChar, req.body.ProductNumber)
+            .input('Color', sql.VarChar, req.body.Color)
+            .input('StandardCost', sql.Decimal(19, 4), req.body.StandardCost)
+            .input('ListPrice', sql.Decimal(19, 4), req.body.ListPrice)
+            .input('Size', sql.VarChar, req.body.Size)
+            .input('Weight', sql.Decimal(8, 2), req.body.Weight)
+            .input('ProductCategoryID', sql.Int, req.body.ProductCategoryID)
+            .input('ProductModelID', sql.Int, req.body.ProductModelID)
+            .execute('Production.InsertProduct')
+        res.json({ message: 'Producto creado exitosamente', ProductID: resultado.recordset[0].ProductID });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'No se logro crear el producto' });
+
+    }
 })
 
 sql.close();

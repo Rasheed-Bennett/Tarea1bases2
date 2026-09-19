@@ -2,7 +2,7 @@ USE AdventureWorks2022;
 
 
 GO
-CREATE PROCEDURE Production.GetProductCategoryByID
+CREATE PROCEDURE Production.JGetProductCategoryByID
 @ProductID INT
 AS
 BEGIN
@@ -22,7 +22,7 @@ END
 
 
 GO
-CREATE PROCEDURE Production.GetProductCategoryByName
+CREATE PROCEDURE Production.JGetProductCategoryByName
 @ProductName NVARCHAR (50)
 AS
 BEGIN
@@ -41,7 +41,7 @@ END
 
 
 GO
-CREATE PROCEDURE Production.UpdateProductCategoryByID
+CREATE PROCEDURE Production.JUpdateProductCategoryByID
 @ProductID INT, @ProductCategoryID INT
 AS
 BEGIN
@@ -55,7 +55,7 @@ END
 
 
 GO
-CREATE PROCEDURE Production.DeleteProductReviewByID
+CREATE PROCEDURE Production.JDeleteProductReviewByID
 @ProductID INT, @ReviewID INT
 AS
 BEGIN
