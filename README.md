@@ -3,5 +3,5 @@
 
 
 ### Estado del proyecto:
-### Enlace del video:
+### Enlace del video: https://youtu.be/iAsmUTPnLOI
 Recordar que el video debe ser público para ser visto por el profesor
